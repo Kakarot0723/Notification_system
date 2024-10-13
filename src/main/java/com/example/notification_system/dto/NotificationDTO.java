@@ -12,4 +12,5 @@ public class NotificationDTO {
     private NotificationType notificationType;
     //private NotificationStatus notificationStatus;
     private String channelName; // Added channelName
+    private String subject;
 }

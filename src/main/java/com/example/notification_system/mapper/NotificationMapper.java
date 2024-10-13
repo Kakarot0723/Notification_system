@@ -33,6 +33,7 @@ public class NotificationMapper {
         notification.setRecipient(notificationDTO.getRecipient());
         notification.setMessage(notificationDTO.getMessage());
         notification.setNotificationType(notificationDTO.getNotificationType());
+        notification.setSubject(notificationDTO.getSubject());
         // Do not set channel here; it's handled in the service layer
         return notification;
     }

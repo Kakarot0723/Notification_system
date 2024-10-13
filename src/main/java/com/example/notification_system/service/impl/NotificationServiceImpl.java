@@ -1,5 +1,6 @@
 package com.example.notification_system.service.impl;
 
+import com.example.notification_system.dto.NotificationDTO;
 import com.example.notification_system.entity.Channel;
 import com.example.notification_system.entity.Notification;
 import com.example.notification_system.enums.ChannelStatus;
@@ -29,6 +30,8 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Autowired
     private ChannelRepository channelRepository;
+
+    private NotificationDTO notificationDTO;
 
     @Transactional
     @Override
@@ -62,6 +65,7 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setChannel(channel);
         notification.setNotificationType(notification.getNotificationType());
         notification.setNotificationStatus(NotificationStatus.IN_PROGRESS);
+        notification.setSubject(notification.getSubject());
         notificationRepository.save(notification);
 
 
@@ -69,7 +73,7 @@ public class NotificationServiceImpl implements NotificationService {
             if (NotificationType.SMS.equals(notification.getNotificationType())) {
                 smsSender.sendSms(notification.getRecipient(), notification.getMessage());
             } else if (NotificationType.EMAIL.equals(notification.getNotificationType())) {
-                emailSender.sendEmail(notification.getRecipient(), "Notification", notification.getMessage());
+                emailSender.sendEmail(notification.getRecipient(), notification.getSubject(), notification.getMessage());
             }
 
             // Update status to SUCCESS
