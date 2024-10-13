@@ -1,36 +1,34 @@
 package com.example.notification_system.service.impl;
 
+import com.example.notification_system.configuration.TwilioConfig;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
-import com.twilio.rest.lookups.v1.PhoneNumber;
 import jakarta.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 @Service
 public class TwilioSmsSender {
 
-    @Value("${twilio.accountSid}")
-    private String accountSid;
-
-    @Value("${twilio.authToken}")
-    private String authToken;
-
-    @Value("${twilio.phoneNumber}")
-    private String fromPhoneNumber;
+    @Autowired
+    TwilioConfig twilioConfig;
 
     @PostConstruct
     public void init() {
-        Twilio.init(accountSid, authToken);
+        Twilio.init(twilioConfig.getAccountSid(), twilioConfig.getAuthToken());
     }
 
     public void sendSms(String to, String message) {
-        Twilio.init(accountSid, authToken);
+        System.out.println("Sending SMS to " + to + " with message: " + message);
         Message.creator(
                 new com.twilio.type.PhoneNumber(to),
-                new com.twilio.type.PhoneNumber(fromPhoneNumber),
+                new com.twilio.type.PhoneNumber(twilioConfig.getTrialNumber()),
                 message
         ).create();
     }

@@ -10,7 +10,6 @@ public class NotificationDTO {
     private String recipient;
     private String message;
     private NotificationType notificationType;
-    private NotificationStatus notificationStatus;
-    private Integer channelId;
-    // No need for createdAt and updatedAt in DTO unless required
+    //private NotificationStatus notificationStatus;
+    private String channelName; // Added channelName
 }

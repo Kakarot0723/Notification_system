@@ -6,16 +6,14 @@ import com.example.notification_system.enums.NotificationType;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class ChannelDTO {
 
     private Integer id;
     private String name;
-    private LocalDateTime expiryTime;
+    private Integer expiryTime;
     private ChannelStatus channelStatus;
-    private String channelKey;
-    private NotificationType notificationType;
-    private NotificationStatus notificationStatus;
-
+    private List<String> notificationType;
 }

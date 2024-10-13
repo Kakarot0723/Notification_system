@@ -5,8 +5,10 @@ import com.example.notification_system.enums.NotificationStatus;
 import com.example.notification_system.enums.NotificationType;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -17,24 +19,20 @@ public class Channel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     @Column(name = "expiry_time", nullable = false)
-    private LocalDateTime expiryTime;
+    private Integer expiryTime; // Changed to Integer
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "channel_status", nullable = false)
+    @Column(name = "status", nullable = false)
     private ChannelStatus channelStatus;
 
-    @Column(name = "channel_key", nullable = false, unique = true)
-    private String channelKey;
-
-    @Enumerated(EnumType.STRING)
     @Column(name = "notification_type", nullable = false)
-    private NotificationType notificationType;
+    private List<String> notificationType;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "notification_status", nullable = false)
-    private NotificationStatus notificationStatus;
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 }

@@ -8,9 +8,11 @@ import com.example.notification_system.enums.NotificationType;
 import com.example.notification_system.repository.ChannelRepository;
 import com.example.notification_system.repository.NotificationRepository;
 import com.example.notification_system.service.NotificationService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -28,10 +30,11 @@ public class NotificationServiceImpl implements NotificationService {
     @Autowired
     private ChannelRepository channelRepository;
 
+    @Transactional
     @Override
-    public Notification sendNotification(Notification notification) {
+    public Notification sendNotification(Notification notification, String channelName) {
         // Fetch the channel
-        Optional<Channel> channelOpt = channelRepository.findById(notification.getChannel().getId());
+        Optional<Channel> channelOpt = channelRepository.findByName(channelName);
         if (!channelOpt.isPresent()) {
             notification.setNotificationStatus(NotificationStatus.FAILED);
             notificationRepository.save(notification);
@@ -40,17 +43,27 @@ public class NotificationServiceImpl implements NotificationService {
 
         Channel channel = channelOpt.get();
 
-        // Check if the channel is enabled and supports the notification type
-        if (!ChannelStatus.ENABLED.equals(channel.getChannelStatus()) ) {
+        // Check if the channel is enabled
+        if (!ChannelStatus.ENABLED.equals(channel.getChannelStatus())) {
             notification.setNotificationStatus(NotificationStatus.FAILED);
             notificationRepository.save(notification);
-            throw new RuntimeException("Channel is not enabled or does not support this notification type");
+            throw new RuntimeException("Channel is not enabled");
         }
 
-        // Set status to IN_PROGRESS
+        boolean isExpired = isChannelExpired(channel);
+        if (isExpired) {
+            notification.setChannel(channel);
+            notification.setNotificationStatus(NotificationStatus.FAILED);
+            notificationRepository.save(notification);
+            throw new RuntimeException("Channel has expired");
+        }
+
+        // Set channel and other details
+        notification.setChannel(channel);
+        notification.setNotificationType(notification.getNotificationType());
         notification.setNotificationStatus(NotificationStatus.IN_PROGRESS);
-        notification.setNotificationType(channel.getNotificationType());
         notificationRepository.save(notification);
+
 
         try {
             if (NotificationType.SMS.equals(notification.getNotificationType())) {
@@ -64,9 +77,16 @@ public class NotificationServiceImpl implements NotificationService {
         } catch (Exception e) {
             // Update status to FAILED
             notification.setNotificationStatus(NotificationStatus.FAILED);
+            notificationRepository.save(notification);
+            throw new RuntimeException("Error Occurred", e);
         }
-
         notificationRepository.save(notification);
         return notification;
+    }
+
+    private boolean isChannelExpired(Channel channel) {
+        // Assuming you have a 'createdAt' field in Channel
+        LocalDateTime expirationMoment = channel.getCreatedAt().plusSeconds(channel.getExpiryTime());
+        return LocalDateTime.now().isAfter(expirationMoment);
     }
 }
