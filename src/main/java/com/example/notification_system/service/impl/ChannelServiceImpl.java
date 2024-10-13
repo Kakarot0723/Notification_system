@@ -5,6 +5,7 @@ import com.example.notification_system.repository.ChannelRepository;
 import com.example.notification_system.service.ChannelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -25,7 +26,6 @@ public class ChannelServiceImpl implements ChannelService {
     public Optional<Channel> getChannelById(Integer id) {
         return channelRepository.findById(id);
     }
-
     @Override
     public Channel createChannel(Channel channel) {
         return channelRepository.save(channel);
@@ -48,16 +48,9 @@ public class ChannelServiceImpl implements ChannelService {
             if (channelDetails.getChannelStatus() != null) {
                 channel.setChannelStatus(channelDetails.getChannelStatus());
             }
-            if (channelDetails.getChannelKey() != null) {
-                channel.setChannelKey(channelDetails.getChannelKey());
-            }
             if (channelDetails.getNotificationType() != null) {
                 channel.setNotificationType(channelDetails.getNotificationType());
             }
-            if (channelDetails.getNotificationStatus() != null) {
-                channel.setNotificationStatus(channelDetails.getNotificationStatus());
-            }
-
             return Optional.of(channelRepository.save(channel));
         } else {
             return Optional.empty();

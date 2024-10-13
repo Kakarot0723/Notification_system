@@ -1,5 +1,4 @@
 package com.example.notification_system.repository;
-
 import com.example.notification_system.entity.Notification;
 import org.springframework.data.jpa.repository.JpaRepository;
 

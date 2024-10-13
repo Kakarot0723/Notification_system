@@ -21,7 +21,7 @@ public class Notification {
     @Column(name = "recipient", nullable = false)
     private String recipient;
 
-    @Column(name = "message", nullable = false, length = 1000)
+    @Column(name = "message", nullable = false, length = 100)
     private String message;
 
     @Enumerated(EnumType.STRING)
@@ -29,10 +29,10 @@ public class Notification {
     private NotificationType notificationType;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "notification_status", nullable = false)
+    @Column(name = "status", nullable = false)
     private NotificationStatus notificationStatus;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
     @JoinColumn(name = "channel_id", nullable = false)
     private Channel channel;
 

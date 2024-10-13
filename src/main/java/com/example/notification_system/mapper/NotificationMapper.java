@@ -16,10 +16,24 @@ public class NotificationMapper {
 
 
     public NotificationDTO convertToDto(Notification notification) {
-        return modelMapper.map(notification, NotificationDTO.class);
+        //return modelMapper.map(notification, NotificationDTO.class);
+        NotificationDTO dto = new NotificationDTO();
+        dto.setId(notification.getId());
+        dto.setRecipient(notification.getRecipient());
+        dto.setMessage(notification.getMessage());
+        dto.setNotificationType(notification.getNotificationType());
+        // dto.setNotificationStatus(notification.getNotificationStatus()); // Optional
+        dto.setChannelName(notification.getChannel().getName());
+        return dto;
     }
 
     public Notification convertToEntity(NotificationDTO notificationDTO) {
-        return modelMapper.map(notificationDTO, Notification.class);
+        //return modelMapper.map(notificationDTO, Notification.class);
+        Notification notification = new Notification();
+        notification.setRecipient(notificationDTO.getRecipient());
+        notification.setMessage(notificationDTO.getMessage());
+        notification.setNotificationType(notificationDTO.getNotificationType());
+        // Do not set channel here; it's handled in the service layer
+        return notification;
     }
 }

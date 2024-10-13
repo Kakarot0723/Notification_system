@@ -23,7 +23,7 @@ public class NotificationController {
     @PostMapping
     public NotificationDTO sendNotification(@RequestBody NotificationDTO notificationDTO) {
         Notification notification = notificationMapper.convertToEntity(notificationDTO);
-        Notification sentNotification = notificationService.sendNotification(notification);
+        Notification sentNotification = notificationService.sendNotification(notification, notificationDTO.getChannelName());
         return notificationMapper.convertToDto(sentNotification);
     }
 
